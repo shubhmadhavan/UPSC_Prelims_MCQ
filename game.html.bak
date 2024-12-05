@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solving Paper</title>
+</head>
+<body>
+  <h1>Welcome to the Exam</h1>
+  <div id="question-container" style="column-count:2;"></div>
+  <button id="next-page">Next Page</button>
+
+  <script>
+    // Get the paper name from the URL (query parameter)
+    const urlParams = new URLSearchParams(window.location.search);
+    const paperName = urlParams.get('paper');
+
+    // Load the questions for the selected paper
+    fetch(`data/${paperName}.json`)
+      .then(response => response.json())
+      .then(data => {
+        let currentPage = 1;
+        const totalPages = Object.keys(data).length;
+
+        // Function to render questions for a specific page
+        const renderQuestions = (pageData) => {
+          const container = document.getElementById('question-container');
+          container.innerHTML = ""; // Clear existing content
+
+          pageData.forEach(questionData => {
+            // Create question text
+            const questionText = document.createElement('div');
+            questionText.style.textAlign = 'left';
+            questionText.textContent = `Q${questionData.qno}: ${questionData.qtext}`;
+            container.appendChild(questionText);
+
+            // Create options list
+            const optionsList = document.createElement('ul');
+            optionsList.style.listStyle = 'none';
+            optionsList.style.padding = '0';
+
+            const createStatementsList = (statements) => {
+              const list = document.createElement('ul');
+              list.style.listStyle = 'none';
+              list.style.padding = '0';
+              statements.forEach((statement, index) => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${index + 1}. ${statement}`;
+                listItem.style.marginBottom = '5px';
+                list.appendChild(listItem);
+              });
+              return list;
+            };
+
+            // Handle different qtypes
+            if (questionData.qtype === 'single') {
+              questionData.options.forEach((option, index) => {
+                const optionItem = document.createElement('li');
+                optionItem.style.marginBottom = '5px';
+                const optionInput = document.createElement('input');
+                const optionLabel = document.createElement('label');
+
+                optionInput.type = 'radio';
+                optionInput.name = `q${questionData.qno}`;
+                optionInput.value = String.fromCharCode(97 + index); // 'a', 'b', 'c', etc.
+
+                const storedSelection = localStorage.getItem(`q${questionData.qno}`);
+                if (storedSelection === optionInput.value) {
+                  optionInput.checked = true;
+                }
+
+                optionLabel.textContent = option;
+                optionLabel.style.marginLeft = '5px';
+                optionLabel.style.cursor = 'pointer';
+
+                optionInput.addEventListener('change', () => {
+                  localStorage.setItem(`q${questionData.qno}`, optionInput.value);
+                  handleOptionSelection(optionsList, optionInput, questionData.ans);
+                });
+
+                optionItem.appendChild(optionInput);
+                optionItem.appendChild(optionLabel);
+                optionsList.appendChild(optionItem);
+              });
+            } else if (questionData.qtype === 'both') {
+              const statementsList = createStatementsList(questionData.Statements.slice(0, 2));
+              container.appendChild(statementsList);
+
+              ['Statement 1 is correct', 'Statement 2 is correct', 'Both Statements are correct', 'Neither Statement 1 nor 2 is correct'].forEach((option, index) => {
+                const optionItem = document.createElement('li');
+                optionItem.style.marginBottom = '5px';
+                const optionInput = document.createElement('input');
+                const optionLabel = document.createElement('label');
+
+                optionInput.type = 'radio';
+                optionInput.name = `q${questionData.qno}`;
+                optionInput.value = String.fromCharCode(97 + index);
+
+                const storedSelection = localStorage.getItem(`q${questionData.qno}`);
+                if (storedSelection === optionInput.value) {
+                  optionInput.checked = true;
+                }
+
+                optionLabel.textContent = option;
+                optionLabel.style.marginLeft = '5px';
+                optionLabel.style.cursor = 'pointer';
+
+                optionInput.addEventListener('change', () => {
+                  localStorage.setItem(`q${questionData.qno}`, optionInput.value);
+                  handleOptionSelection(optionsList, optionInput, questionData.ans);
+                });
+
+                optionItem.appendChild(optionInput);
+                optionItem.appendChild(optionLabel);
+                optionsList.appendChild(optionItem);
+              });
+            } else if (questionData.qtype === 'stat') {
+              const statementsList = createStatementsList(questionData.Statements);
+              container.appendChild(statementsList);
+
+              questionData.options.forEach((option, index) => {
+                const optionItem = document.createElement('li');
+                optionItem.style.marginBottom = '5px';
+                const optionInput = document.createElement('input');
+                const optionLabel = document.createElement('label');
+
+                optionInput.type = 'radio';
+                optionInput.name = `q${questionData.qno}`;
+                optionInput.value = String.fromCharCode(97 + index);
+
+                const storedSelection = localStorage.getItem(`q${questionData.qno}`);
+                if (storedSelection === optionInput.value) {
+                  optionInput.checked = true;
+                }
+
+                optionLabel.textContent = option;
+                optionLabel.style.marginLeft = '5px';
+                optionLabel.style.cursor = 'pointer';
+
+                optionInput.addEventListener('change', () => {
+                  localStorage.setItem(`q${questionData.qno}`, optionInput.value);
+                  handleOptionSelection(optionsList, optionInput, questionData.ans);
+                });
+
+                optionItem.appendChild(optionInput);
+                optionItem.appendChild(optionLabel);
+                optionsList.appendChild(optionItem);
+              });
+            }
+
+            container.appendChild(optionsList);
+          });
+        };
+
+        // Handle option selection and update color
+        const handleOptionSelection = (optionsList, input, correctAns) => {
+          optionsList.querySelectorAll('li').forEach((li) => {
+            const input = li.querySelector('input');
+            const label = li.querySelector('label');
+            label.style.color = '';
+            if (input.checked && input.value === correctAns) {
+              label.style.color = '#49CDC8'; // Correct answer
+            } else if (input.checked) {
+              label.style.color = '#AB6565'; // Incorrect answer
+            }
+            if (input.value === correctAns && !input.checked) {
+              label.style.color = '#49CDC8'; // Correct answer (even if not selected)
+            }
+          });
+        };
+
+        // Render the first page
+        renderQuestions(data[`page${currentPage}`]);
+
+        // Functionality for Next Page Button
+        document.getElementById('next-page').addEventListener('click', function() {
+          if (currentPage < totalPages) {
+            currentPage++;
+            renderQuestions(data[`page${currentPage}`]);
+          } else {
+            alert('You have finished the exam!');
+            // Optionally, redirect to a results page or show correct answers
+          }
+        });
+      })
+      .catch(err => console.error('Error loading paper:', err));
+  </script>
+</body>
+</html>

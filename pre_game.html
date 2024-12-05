@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCQ Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #ffffff;
+        }
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: block;
+            justify-content: center;
+            align-items: center;
+			background-color: #2a2a2a;
+           
+        }
+        #question-container {
+            padding: 20px;
+            position: relative;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .navigation button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #49CDC8;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .navigation button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        ul{
+            margin-left:30px;
+        } 
+    </style>
+</head>
+<body>
+
+
+    <div id="question-container" style="column-count: 2; width:900px; column-rule: solid 1px #808080;">
+        Loading questions...
+    </div>
+    <div class="navigation"  style="width:800px;">
+        <button id="prev-page" disabled>&laquo; Previous</button>
+        <button id="next-page" disabled>ㅤNext &raquo;ㅤ</button>
+    </div>
+    
+    
+    
+    
+
+    
+    
+    <script>
+        const papers = {
+            "Prelims-2024": {
+                name: "Prelims-2024",
+                json_loc: 'data/Prelims-2024'
+            },
+            "Prelims-2023": {
+                name: "Prelims-2023",
+                json_loc: 'data/Prelims-2023'
+            },
+            "Prelims-2022": {
+                name: "Prelims-2022",
+                json_loc: 'data/Prelims-2022'
+            },
+            "Prelims-2021": {
+                name: "Prelims-2021",
+                json_loc: 'data/Prelims-2021'
+            },
+            "Prelims-2020": {
+                name: "Prelims-2020",
+                json_loc: 'data/Prelims-2020'
+            },
+            "Prelims-2019": {
+                name: "Prelims-2019",
+                json_loc: 'data/Prelims-2019'
+            }
+        };
+        
+        // Default to "Prelims-2024"
+        let currentpaper = papers["Prelims-2024"];
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        console.log('Loaded URL parameters.');
+        
+        if (urlParams.has('paper')) {
+            const urlpaper = urlParams.get('paper');
+            
+            // Check if the paper exists in the papers object
+            if (papers.hasOwnProperty(urlpaper)) {
+                currentpaper = papers[urlpaper];
+            } else {
+                console.log('DeUnknown paper:', urlpaper);
+            }
+        } else {
+            console.log('No paper specified in the URL.');
+        }
+        
+        const paper_name = currentpaper.name;
+        const paper_json = currentpaper.json_loc;
+        
+        // Log results for debugging
+        console.log('Current paper name:', paper_name);
+        console.log('Current paper JSON location:', paper_json);
+
+        </script>
+        
+
+
+
+
+
+
+    
+        <script>
+            (async function () {
+                const container = document.getElementById('question-container');
+                const prevButton = document.getElementById('prev-page');
+                const nextButton = document.getElementById('next-page');
+                const resetButton = document.createElement('div');
+       /*
+                resetButton.id = 'reset-button';
+                resetButton.textContent = '⟳';
+                container.appendChild(resetButton);
+                */
+    
+                let currentPage = 1;
+                let questionData = null;
+    
+                // Fetch JSON data based on the selected paper
+                const fetchQuestions = async (paperJson) => {
+                    try {
+                        const response = await fetch(`${paperJson}.json`);
+                        if (!response.ok) throw new Error('Failed to load questions');
+                        return await response.json();
+                    } catch (error) {
+                        console.error(error);
+                        container.textContent = 'Error loading questions.';
+                        return null;
+                    }
+                };
+    
+                // Render questions for the current page
+                const renderQuestions = (questions) => {
+                    container.innerHTML = '';
+                    container.appendChild(resetButton);
+    
+                    questions.forEach(questionData => {
+                        // Create question text
+                        const questionText = document.createElement('div');
+                        questionText.style.textAlign = 'left';
+                        questionText.textContent = `${questionData.qno}.ㅤ${questionData.qtext}`;
+                        container.appendChild(questionText);
+    
+
+                          // Add qhtml content rendered as HTML
+                        if (questionData.qhtml) {
+                            const questionHtml = document.createElement('div');
+                            questionHtml.style.textAlign = 'left';
+                            questionHtml.innerHTML = questionData.qhtml; // Render qhtml content as HTML
+                            container.appendChild(questionHtml);
+                        }
+
+                        // Function to create options and statements
+                        const optionsList = document.createElement('ul');
+                        optionsList.style.listStyle = 'none';
+                        optionsList.style.padding = '0';
+    
+                        const createStatementsList = (statements) => {
+                            const list = document.createElement('ul');
+                            list.style.listStyle = 'none';
+                            list.style.padding = '0';
+    
+                            statements.forEach((statement, index) => {
+                                const listItem = document.createElement('li');
+                                listItem.textContent = `${index + 1}. ${statement}`;
+                                listItem.style.marginBottom = '5px';
+                                list.appendChild(listItem);
+                            });
+    
+                            return list;
+                        };
+    
+                        // Add options or statements based on question type
+                        if (questionData.qtype === 'single') {
+                            questionData.options.forEach((option, index) => {
+                                const optionItem = document.createElement('li');
+                                const input = document.createElement('input');
+                                const label = document.createElement('label');
+    
+                                input.type = 'radio';
+                                input.name = `q${questionData.qno}`;
+                                input.value = String.fromCharCode(97 + index);
+                                label.textContent = option;
+                                label.style.marginLeft = '5px';
+                                label.style.cursor = 'pointer';
+    
+                                // Check if the option is selected and update the label color
+                                const storedSelection = localStorage.getItem(`q${questionData.qno}`);
+                                if (storedSelection === input.value) {
+                                    input.checked = true;
+                                    if (input.checked && input.value === questionData.ans) {
+                                        label.style.color = '#49CDC8'; // Correct answer
+                                    } else if (input.checked) {
+                                        label.style.color = '#AB6565'; // Incorrect answer
+                                    }
+                                }
+    
+                                input.addEventListener('change', () => {
+                                    localStorage.setItem(`q${questionData.qno}`, input.value);
+    
+                                    // Reset all labels to default color
+                                    const labels = optionsList.querySelectorAll('label');
+                                    labels.forEach((label) => {
+                                        label.style.color = '';
+                                    });
+    
+                                    // Check if option is selected and apply colors accordingly
+                                    if (input.checked && input.value === questionData.ans) {
+                                        label.style.color = '#49CDC8'; // Correct answer
+                                    } else if (input.checked) {
+                                        label.style.color = '#AB6565'; // Incorrect answer
+                                    }
+    
+                                    // Highlight the correct answer in green regardless of selection
+                                    if (input.value === questionData.ans && !input.checked) {
+                                        label.style.color = '#49CDC8'; // Correct answer (even if not selected)
+                                    }
+                                });
+    
+                                optionItem.appendChild(input);
+                                optionItem.appendChild(label);
+                                optionsList.appendChild(optionItem);
+                            });
+                        } else if (questionData.qtype === 'stat' || questionData.qtype === 'both') {
+                            const statementsList = createStatementsList(questionData.Statements);
+                            container.appendChild(statementsList);
+                            questionData.options.forEach((option, index) => {
+                                const optionItem = document.createElement('li');
+                                const input = document.createElement('input');
+                                const label = document.createElement('label');
+    
+                                input.type = 'radio';
+                                input.name = `q${questionData.qno}`;
+                                input.value = String.fromCharCode(97 + index);
+                                label.textContent = option;
+                                label.style.marginLeft = '5px';
+                                label.style.cursor = 'pointer';
+    
+                                // Check if the option is selected and update the label color
+                                const storedSelection = localStorage.getItem(`q${questionData.qno}`);
+                                if (storedSelection === input.value) {
+                                    input.checked = true;
+                                    if (input.checked && input.value === questionData.ans) {
+                                        label.style.color = '#49CDC8'; // Correct answer
+                                    } else if (input.checked) {
+                                        label.style.color = '#AB6565'; // Incorrect answer
+                                    }
+                                }
+    
+                                input.addEventListener('change', () => {
+                                    localStorage.setItem(`q${questionData.qno}`, input.value);
+    
+                                    // Reset all labels to default color
+                                    const labels = optionsList.querySelectorAll('label');
+                                    labels.forEach((label) => {
+                                        label.style.color = '';
+                                    });
+    
+                                    // Check if option is selected and apply colors accordingly
+                                    if (input.checked && input.value === questionData.ans) {
+                                        label.style.color = '#49CDC8'; // Correct answer
+                                    } else if (input.checked) {
+                                        label.style.color = '#AB6565'; // Incorrect answer
+                                    }
+    
+                                    // Highlight the correct answer in green regardless of selection
+                                    if (input.value === questionData.ans && !input.checked) {
+                                        label.style.color = '#49CDC8'; // Correct answer (even if not selected)
+                                    }
+                                });
+    
+                                optionItem.appendChild(input);
+                                optionItem.appendChild(label);
+                                optionsList.appendChild(optionItem);
+                            });
+                        }
+    
+                        container.appendChild(optionsList);
+                    });
+                };
+    
+                // Handle page navigation
+                const updatePage = (direction) => {
+                    if (direction === 'next') currentPage++;
+                    else if (direction === 'prev') currentPage--;
+    
+                    renderQuestions(questionData[`page${currentPage}`]);
+    
+                    prevButton.disabled = currentPage <= 1;
+                    nextButton.disabled = !questionData[`page${currentPage + 1}`];
+                };
+    
+
+                /*
+                // Reset button functionality
+                resetButton.addEventListener('click', () => {
+                    localStorage.clear();
+                    renderQuestions(questionData[`page${currentPage}`]);
+                });
+    
+                */
+
+
+                prevButton.addEventListener('click', () => updatePage('prev'));
+                nextButton.addEventListener('click', () => updatePage('next'));
+    
+                // Load initial data
+                questionData = await fetchQuestions(paper_json);
+                if (questionData) {
+                    renderQuestions(questionData[`page${currentPage}`]);
+                    nextButton.disabled = !questionData[`page${currentPage + 1}`];
+                }
+            })();
+        </script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Create reset button (⟳) on top-right
+        const resetButton = document.createElement('div');
+        resetButton.textContent = '⟳';
+        resetButton.style.position = 'absolute';
+        resetButton.style.top = '10px';
+        resetButton.style.right = '10px';
+        resetButton.style.cursor = 'pointer';
+        resetButton.style.fontSize = '20px';
+        resetButton.style.fontWeight = 'bold';
+        resetButton.style.color = '#808080';
+        resetButton.title = "Resets all options on all pages"; // Tooltip text
+        document.body.appendChild(resetButton);
+
+        // Function to reset all selected radio buttons and remove data from localStorage
+        const resetSelection = () => {
+            // Find all radio buttons
+            const radios = document.querySelectorAll('input[type="radio"]');
+            radios.forEach(radio => {
+                // Deselect all radio buttons
+                radio.checked = false;
+                // Reset label colors (if custom color styling is used)
+                const label = radio.nextElementSibling;
+                if (label) {
+                    label.style.color = ''; // Reset label color
+                }
+            });
+
+            // Clear all data from localStorage
+            localStorage.clear();
+        };
+
+        // Event listener for reset button
+        resetButton.addEventListener('click', resetSelection);
+    });
+</script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Question Creator</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .form-group { margin-bottom: 10px; }
+    label { display: block; font-weight: bold; }
+    input, textarea, select, button { width: 100%; padding: 8px; margin-top: 5px; }
+    #json-output { white-space: pre-wrap; background: #f4f4f4; padding: 10px; border: 1px solid #ccc; }
+    body {
+            font-family: Arial, sans-serif;
+			margin:0;
+            padding: 0;
+            color: #ffffff;
+			width: 98%;
+			margin-left: 12px;
+			margin-top: 12px;
+        }
+    body, html {
+            height: 100%;
+            display: block;
+            justify-content: center;
+            align-items: center;
+            background-color: #202020;  
+        }
+
+    textarea, input, select, pre, button{
+        background-color: #2a2a2a !important; 
+        color: #ffffff !important;
+    }
+  </style>
+</head>
+<body>
+  <!-- <h1>Create Questions</h1>  -->
+  <div id="form">
+    <div class="form-group">
+      <label for="file-name">File Name</label>
+      <input type="text" id="file-name" placeholder="" value="" required>
+    </div>
+    <div class="form-group">
+      <label for="qno">Question Number</label>
+      <input type="number" id="qno" required>
+    </div>
+    <div class="form-group">
+      <label for="qtype">Question Type</label>
+      <select id="qtype">
+        <option value="single">Single</option>
+        <option value="stat">Statement</option>
+        <option value="both">Both</option>
+        <option value="assertion">Assertion</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="qtext">Question Text</label>
+      <textarea id="qtext" required></textarea>
+    </div>
+    <div class="qhtml">
+      <label for="qhtml">HTML</label>
+      <textarea id="qhtml" style="height:40px;" required></textarea>
+    </div>
+    <div class="form-group">
+      <label for="statements">Statements (newline-separated)</label>
+      <textarea id="statements" style="height:60px;" required></textarea>
+    </div>
+    <div class="form-group">
+      <label for="options">Options (newline-separated)</label>
+      <textarea id="options" style="height:60px;" required></textarea>
+    </div>
+    <div class="form-group">
+      <label for="ans">Answer</label>
+      <input type="text" id="ans" required>
+    </div>
+    <button id="add-question">Add Question to Current Page</button>
+    <button id="add-new-page">Add New Page and Question</button>
+    <button id="save-json">Save JSON</button>
+    <button id="undo">Undo</button>
+    <button id="redo">Redo</button>
+  </div>
+
+  <h2>JSON Preview</h2>
+  <pre id="json-output">{}</pre>
+
+  <script>
+    let jsonData = { page1: [] };
+    let currentPage = "page1";
+    let historyStack = [];
+    let redoStack = []; // Stack for redo functionality
+
+    document.getElementById("add-question").addEventListener("click", () => {
+      saveHistory();
+      addQuestion();
+    });
+
+    document.getElementById("add-new-page").addEventListener("click", () => {
+      saveHistory();
+      addNewPage();
+    });
+
+    document.getElementById("save-json").addEventListener("click", () => {
+      saveJSON();
+    });
+
+    document.getElementById("undo").addEventListener("click", () => {
+      undoLastChange();
+    });
+
+    document.getElementById("redo").addEventListener("click", () => {
+      redoLastChange();
+    });
+
+    function saveHistory() {
+      // Save a deep copy of the current jsonData
+      historyStack.push(JSON.parse(JSON.stringify(jsonData)));
+      // Clear redo stack when a new change is made
+      redoStack = [];
+    }
+
+    function addQuestion() {
+      const qno = document.getElementById("qno").value;
+      const qtype = document.getElementById("qtype").value;
+      const qtext = document.getElementById("qtext").value;
+      const statements = document.getElementById("statements").value.split("\n").filter(Boolean);
+      const options = document.getElementById("options").value.split("\n").filter(Boolean);
+      const ans = document.getElementById("ans").value;
+
+      const question = {
+        qno: parseInt(qno),
+        qtype,
+        qtext,
+        Statements: statements,
+        qhtml: "<div></div>",
+        options,
+        ans,
+      };
+
+      jsonData[currentPage].push(question);
+      updatePreview();
+    }
+
+    function addNewPage() {
+      const newPage = `page${Object.keys(jsonData).length + 1}`;
+      currentPage = newPage;
+      jsonData[newPage] = [];
+      addQuestion();
+    }
+
+    function updatePreview() {
+      document.getElementById("json-output").textContent = JSON.stringify(jsonData, null, 2);
+    }
+
+    function saveJSON() {
+      const fileName = document.getElementById("file-name").value || "questions.json";
+      const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      a.click();
+    }
+
+function undoLastChange() {
+  if (historyStack.length > 0) {
+    redoStack.push(JSON.parse(JSON.stringify(jsonData))); // Save the current state to redo stack
+    jsonData = historyStack.pop(); // Get the previous state from history stack
+    updatePreview();
+    showActionMessage("Undo");
+  } else {
+    console.log('No changes to undo');
+  }
+}
+
+function redoLastChange() {
+  if (redoStack.length > 0) {
+    historyStack.push(JSON.parse(JSON.stringify(jsonData))); // Save current state to history stack
+    jsonData = redoStack.pop(); // Get the most recent redo state
+    updatePreview();
+    showActionMessage("Redo");
+  } else {
+    console.log('No changes to redo');
+  }
+}
+
+
+
+    document.addEventListener("keydown", (event) => {
+      if (event.ctrlKey && event.key === "Enter" && !event.shiftKey) {
+        // Ctrl + Enter: Add Question to Current Page
+        event.preventDefault();
+        document.getElementById("add-question").click();
+      } else if (event.ctrlKey && event.shiftKey && event.key === "Enter") {
+        // Ctrl + Shift + Enter: Add New Page and Question
+        event.preventDefault();
+        document.getElementById("add-new-page").click();
+      } else if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "s") {
+        // Ctrl + Shift + S: Save JSON
+        event.preventDefault();
+        document.getElementById("save-json").click();
+      } else if (event.altKey && event.key.toLowerCase() === "z") {
+        // Alt + Shift + Z: Undo
+        event.preventDefault();
+        document.getElementById("undo").click();
+      } else if (event.altKey && event.key.toLowerCase() === "r") {
+        // Alt + Shift + Z: Redo
+        event.preventDefault();
+        document.getElementById("redo").click();
+      }
+    });
+  </script>
+
+
+
+
+
+<script>
+  // Function to show the hover box with the action message
+  function showActionMessage(message) {
+    const hoverBox = document.createElement("div");
+    hoverBox.textContent = message;
+    hoverBox.style.position = "fixed";
+    hoverBox.style.bottom = "20px";
+    hoverBox.style.right = "20px";
+    hoverBox.style.backgroundColor = "#333";
+    hoverBox.style.color = "#fff";
+    hoverBox.style.padding = "10px";
+	hoverBox.style.zIndex = "999";
+    hoverBox.style.borderRadius = "5px";
+    hoverBox.style.fontSize = "20px";
+    hoverBox.style.opacity = "1";
+    hoverBox.style.transition = "opacity 1s ease-in-out";
+
+    document.body.appendChild(hoverBox);
+
+    setTimeout(() => {
+      hoverBox.style.opacity = "0";
+      setTimeout(() => {
+        hoverBox.remove();
+      }, 500); // Wait for the fade-out effect before removing the box
+    }, 500);
+  }
+
+  // Updated functions to show specific messages
+  function undoLastChange() {
+    if (historyStack.length > 0) {
+      redoStack.push(JSON.parse(JSON.stringify(jsonData))); // Save current state to redo stack
+      jsonData = historyStack.pop();
+      updatePreview();
+      showActionMessage("Undo");
+    } else {
+      console.log('No changes to undo');
+    }
+  }
+
+  function redoLastChange() {
+    if (redoStack.length > 0) {
+      jsonData = redoStack.pop();
+      updatePreview();
+      showActionMessage("Redo");
+    } else {
+      console.log('No changes to redo');
+    }
+  }
+
+  function saveJSON() {
+    const fileName = document.getElementById("file-name").value || "questions.json";
+    const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = fileName;
+    a.click();
+    showActionMessage("JSON saved successfully");
+  }
+
+  function addQuestion() {
+    const qno = document.getElementById("qno").value;
+    const qtype = document.getElementById("qtype").value;
+    const qtext = document.getElementById("qtext").value;
+    const statements = document.getElementById("statements").value.split("\n").filter(Boolean);
+    const options = document.getElementById("options").value.split("\n").filter(Boolean);
+    const ans = document.getElementById("ans").value;
+
+    // Safety checks
+    if (!qno || !qtext) {
+      alert("Empty qno or qtext field");
+      document.getElementById("qno").focus(); // Focus back to the qno input
+      return;
+    }
+    if (options.length < 4) {
+      alert("Fill options");
+      document.getElementById("options").focus(); // Focus back to the qno input
+      return;
+    }
+    if (!ans) {
+      alert("Ans field empty");
+      document.getElementById("ans").focus(); // Focus back to the qno input
+      return;
+    }
+
+    // Check if the qno already exists in the current page
+    const questionExists = jsonData[currentPage].some(question => question.qno == qno);
+    if (questionExists) {
+      alert("qno already exists");
+      document.getElementById("qno").focus(); // Focus back to the qno input
+      return;
+    }
+
+    const question = {
+      qno: parseInt(qno),
+      qtype,
+      qtext,
+      Statements: statements,
+      qhtml: "<div></div>",
+      options,
+      ans,
+    };
+
+    jsonData[currentPage].push(question);
+    updatePreview();
+    showActionMessage("Q added");
+    document.getElementById("qno").focus(); // Focus back to the qno input
+  }
+
+  function addNewPage() {
+    const qno = document.getElementById("qno").value;
+    const qtext = document.getElementById("qtext").value;
+    const options = document.getElementById("options").value.split("\n").filter(Boolean);
+    const ans = document.getElementById("ans").value;
+
+    // Safety checks
+    if (!qno || !qtext) {
+      alert("Empty qno or qtext field");
+      document.getElementById("qno").focus(); // Focus back to the qno input
+      return;
+    }
+    if (options.length < 4) {
+      alert("Fill options");
+      document.getElementById("options").focus(); // Focus back to the qno input
+      return;
+    }
+    if (!ans) {
+      alert("Ans field empty");
+      document.getElementById("ans").focus(); // Focus back to the qno input
+      return;
+    }
+
+    // Check if the qno already exists in the current page
+    const questionExists = jsonData[currentPage].some(question => question.qno == qno);
+    if (questionExists) {
+      alert("qno already exists");
+      document.getElementById("qno").focus(); // Focus back to the qno input
+      return;
+    }
+
+    const newPage = `page${Object.keys(jsonData).length + 1}`;
+    currentPage = newPage;
+    jsonData[newPage] = [];
+    addQuestion();
+    showActionMessage("Q added to New Page");
+    document.getElementById("qno").focus(); // Focus back to the qno input
+  }
+
+
+</script>
+
+
+
+
+
+
+</body>
+</html>

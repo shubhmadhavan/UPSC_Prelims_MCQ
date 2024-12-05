@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCQ Game</title>
+</head>
+<body>
+    <h1>MCQ Game - <span id="paper-title"></span></h1>
+    <div id="question-container" style="column-count:2;"></div>
+
+    <script>
+        (function() {
+            // Extract the paper name from the query string
+            const urlParams = new URLSearchParams(window.location.search);
+            const paperName = urlParams.get('paper');
+
+            // Display the paper title dynamically
+            document.getElementById('paper-title').textContent = paperName;
+
+            // Fetch the JSON file corresponding to the paper
+            fetch(`${paperName}.json`)
+                .then(response => response.json())
+                .then(questionDataArray => {
+                    const container = document.getElementById('question-container');
+                    container.innerHTML = ""; // Clear existing content
+
+                    questionDataArray.forEach(questionData => {
+                        // Similar code as you already have to display questions
+                        const questionText = document.createElement('div');
+                        questionText.textContent = `Q${questionData.qno}: ${questionData.qtext}`;
+                        container.appendChild(questionText);
+
+                        const optionsList = document.createElement('ul');
+                        optionsList.style.listStyle = 'none';
+                        optionsList.style.padding = '0';
+
+                        // Handle different question types here
+                        if (questionData.qtype === 'single') {
+                            questionData.options.forEach((option, index) => {
+                                const optionItem = document.createElement('li');
+                                optionItem.style.marginBottom = '5px';
+
+                                const optionInput = document.createElement('input');
+                                const optionLabel = document.createElement('label');
+                                optionInput.type = 'radio';
+                                optionInput.name = `q${questionData.qno}`;
+                                optionInput.value = String.fromCharCode(97 + index); // 'a', 'b', 'c', etc.
+
+                                optionLabel.textContent = option;
+                                optionLabel.style.marginLeft = '5px';
+                                optionLabel.style.cursor = 'pointer';
+
+                                optionItem.appendChild(optionInput);
+                                optionItem.appendChild(optionLabel);
+                                optionsList.appendChild(optionItem);
+                            });
+                        }
+                        // Continue with your existing code for handling 'both' and 'stat' types
+
+                        container.appendChild(optionsList);
+                    });
+                })
+                .catch(err => {
+                    // Handle error if JSON file is not found
+                    const container = document.getElementById('question-container');
+                    container.textContent = 'Error loading the selected paper. Please try again later.';
+                    console.error(err);
+                });
+        })();
+    </script>
+</body>
+</html>

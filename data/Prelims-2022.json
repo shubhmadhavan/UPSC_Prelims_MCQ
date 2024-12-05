@@ -1,0 +1,54 @@
+{
+  "page1": [
+    {
+      "qno": 1,
+      "qtype": "single",
+      "qtext": "What is the capital of France?",
+      "Statements": [],
+      "options": ["Paris", "London", "Berlin", "Rome"],
+      "ans": "a"
+    },
+    {
+      "qno": 2,
+      "qtype": "stat",
+      "qtext": "What is the capital of France?",
+      "Statements": ["hello", "hello"],
+      "options": ["Paris", "London", "Berlin", "Rome"],
+      "ans": "a"
+    },
+    {
+      "qno": 3,
+      "qtype": "both",
+      "qtext": "What is the capital of France?",
+      "Statements": ["hello", "hello"],
+      "options": ["s", "a", "d", "e"],
+      "ans": "a"
+    }
+  ],
+  "page2": [
+    {
+      "qno": 1,
+      "qtype": "single",
+      "qtext": "What is the capital of Germany?",
+      "Statements": [],
+      "options": ["Berlin", "Paris", "London", "Rome"],
+      "ans": "a"
+    },
+    {
+      "qno": 2,
+      "qtype": "stat",
+      "qtext": "What is the capital of Germany?",
+      "Statements": ["hello", "hello"],
+      "options": ["Berlin", "Paris", "London", "Rome"],
+      "ans": "a"
+    },
+    {
+      "qno": 3,
+      "qtype": "both",
+      "qtext": "What is the capital of Germany?",
+      "Statements": ["hello", "hello"],
+      "options": ["s", "a", "d", "e"],
+      "ans": "a"
+    }
+  ]
+}
