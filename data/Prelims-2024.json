@@ -7,7 +7,8 @@
       "Statements": [],
       "qhtml": "<div></div>",
       "options": ["Paris", "London", "Berlin", "Rome"],
-      "ans": "a"
+      "ans": "a",
+      "qnotes": "<div>Line1</div>"
     },
     {
       "qno": 2,
@@ -16,7 +17,8 @@
       "Statements": ["hello", "hello"],
       "qhtml": "<div></div>",
       "options": ["Paris", "London", "Berlin", "Rome"],
-      "ans": "a"
+      "ans": "a",
+      "qnotes": "<div>Line1</div><div>Line2</div><div>Line3</div>"
     },
     {
       "qno": 3,
@@ -25,7 +27,8 @@
       "Statements": ["hello", "hello"],
       "qhtml": "<div></div>",
       "options": ["s", "a", "d", "e"],
-      "ans": "a"
+      "ans": "a",
+      "qnotes": "<div><div>Line2</div></div><div>Line4</div>"
     }
   ],
   "page2": [
@@ -36,7 +39,8 @@
       "Statements": [],
       "qhtml": "<div></div>",
       "options": ["Berlin", "Paris", "London", "Rome"],
-      "ans": "a"
+      "ans": "a",
+      "qnotes": "<div></div>"
     },
     {
       "qno": 5,
@@ -45,7 +49,8 @@
       "Statements": ["hello", "hello"],
       "qhtml": "<div></div>",
       "options": ["Berlin", "Paris", "London", "Rome"],
-      "ans": "a"
+      "ans": "a",
+      "qnotes": "<div></div>"
     },
     {
       "qno": 6,
@@ -54,7 +59,8 @@
       "Statements": ["hello", "hello"],
       "qhtml": "<div></div>",
       "options": ["s", "a", "d", "e"],
-      "ans": "a"
+      "ans": "a",
+      "qnotes": "<div></div>"
     }
   ],
     "page3": [
@@ -65,7 +71,8 @@
         "Statements": [],
         "qhtml": "<div></div>",
         "options": ["Berlin", "Paris", "London", "Rome"],
-        "ans": "a"
+        "ans": "a",
+      "qnotes": "<div></div>"
       },
       {
         "qno": 8,
@@ -74,7 +81,8 @@
         "Statements": ["hello", "hello"],
         "qhtml": "<div></div>",
         "options": ["Berlin", "Paris", "London", "Rome"],
-        "ans": "a"
+        "ans": "a",
+      "qnotes": "<div></div>"
       },
       {
         "qno": 9,
@@ -83,7 +91,8 @@
         "Statements": ["hello", "hello"],
         "qhtml": "<div></div>",
         "options": ["s", "a", "d", "e"],
-        "ans": "a"
+        "ans": "a",
+      "qnotes": "<div></div>"
       }
   ]
 }
