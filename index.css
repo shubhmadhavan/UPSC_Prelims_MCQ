@@ -1,0 +1,244 @@
+
+        body, html {
+            height: 100%;
+            margin: 0;
+			margin-top: -20px;
+            display: block;
+            justify-content: center;
+            align-items: center;
+			font-size:24px;
+			background-color: #2a2a2a;
+        }
+
+		body::-webkit-scrollbar {
+  			display: none; /* For Chrome, Safari, and Edge */
+		}
+
+        .container {
+            width: 100%;
+            max-height: 100%;
+        }
+
+        .centered {
+            text-align: center;
+        }
+		
+
+		.wrapper{
+		  display: inline-flex;
+		  background: #fff;
+		  height: 350px ;
+		  width: 1000px;  /* for every paper, add 200px to width */
+		  align-items: center;
+		  justify-content: space-evenly;
+		  border-radius: 5px;
+		  padding: 20px 15px;
+		  box-shadow: 5px 5px 30px rgba(0,0,0,0.2);
+		}
+		.wrapper label{
+			height: 40px !important;	
+		}
+		.wrapper .option{
+		  background: #fff;
+		  height: 100%;
+		  width: 100%;
+		  display: flex;
+		  align-items: center;
+		  justify-content: space-evenly;
+		  margin: 0 10px;
+		  border-radius: 5px;
+		  cursor: pointer;
+		  padding: 0 10px;
+		  border: 2px solid lightgrey;
+		  transition: all 0.3s ease;
+		}
+		.wrapper .option .dot{
+		  height: 20px;
+		  width: 20px;
+		  background: #d9d9d9;
+		  border-radius: 50%;
+		  position: relative;
+		}
+		.wrapper .option .dot::before{
+		  position: absolute;
+		  content: "";
+		  top: 4px;
+		  left: 4px;
+		  width: 12px;
+		  height: 12px;
+		  background: #373737;
+		  border-radius: 50%;
+		  opacity: 0;
+		  transform: scale(1.5);
+		  transition: all 0.3s ease;
+		}
+		input[type="radio"]{
+		  display: none;
+		}
+		.wrapper .option span{
+		  font-size: 16px;
+		  color: #808080;
+		}
+		.label {
+		  	width: auto;
+		}
+
+		button {
+		  background-color: #373737;
+		  border: none;
+		  color: white;
+		  
+		  padding: 12px 32px;
+		  text-decoration: none;
+		  margin: 8px 4px;
+		  cursor: pointer;
+		  font-size:18px;
+		  border-radius: 5px;
+		}
+		
+		label:hover{		
+	box-shadow: 0 0 8px #fdf7d5;
+
+		}
+
+		#option-lang-1:checked:checked ~ .option-lang-1,
+		#option-lang-2:checked:checked ~ .option-lang-2{
+		  border-color: #373737;
+		  background: #373737;
+		}
+		#option-lang-1:checked:checked ~ .option-lang-1 .dot,
+		#option-lang-2:checked:checked ~ .option-lang-2 .dot{
+		  background: #fff;
+		}
+		#option-lang-1:checked:checked ~ .option-lang-1 .dot::before,
+		#option-lang-2:checked:checked ~ .option-lang-2 .dot::before{
+		  opacity: 1;
+		  transform: scale(1);
+		}
+
+		#option-lang-1:checked:checked ~ .option-lang-1 span,
+		#option-lang-2:checked:checked ~ .option-lang-2 span{
+		  color: #fff;
+		}
+		
+		#option-paper-1:checked:checked ~ .option-paper-1,
+		#option-paper-2:checked:checked ~ .option-paper-2,
+		#option-paper-3:checked:checked ~ .option-paper-3,
+		#option-paper-4:checked:checked ~ .option-paper-4,
+		#option-paper-5:checked:checked ~ .option-paper-5,
+		#option-paper-6:checked:checked ~ .option-paper-6,
+		#option-paper-7:checked:checked ~ .option-paper-7,
+		#option-paper-8:checked:checked ~ .option-paper-8,
+		#option-paper-9:checked:checked ~ .option-paper-9,
+		#option-paper-10:checked:checked ~ .option-paper-10,
+		#option-paper-11:checked:checked ~ .option-paper-11,
+		#option-paper-12:checked:checked ~ .option-paper-12{
+		  border-color: #373737;
+		  background: #373737;
+		}
+		#option-paper-1:checked:checked ~ .option-paper-1 .dot,
+		#option-paper-2:checked:checked ~ .option-paper-2 .dot,
+		#option-paper-3:checked:checked ~ .option-paper-3 .dot,
+		#option-paper-4:checked:checked ~ .option-paper-4 .dot,
+		#option-paper-5:checked:checked ~ .option-paper-5 .dot,
+		#option-paper-6:checked:checked ~ .option-paper-6 .dot,
+		#option-paper-7:checked:checked ~ .option-paper-7 .dot,
+		#option-paper-8:checked:checked ~ .option-paper-8 .dot,
+		#option-paper-9:checked:checked ~ .option-paper-9 .dot,
+		#option-paper-10:checked:checked ~ .option-paper-10 .dot,
+		#option-paper-11:checked:checked ~ .option-paper-11 .dot,
+		#option-paper-12:checked:checked ~ .option-paper-12 .dot{
+		  background: #fff;
+		}
+		#option-paper-1:checked:checked ~ .option-paper-1 .dot::before,
+		#option-paper-2:checked:checked ~ .option-paper-2 .dot::before,
+		#option-paper-3:checked:checked ~ .option-paper-3 .dot::before,
+		#option-paper-4:checked:checked ~ .option-paper-4 .dot::before,
+		#option-paper-5:checked:checked ~ .option-paper-5 .dot::before,
+		#option-paper-6:checked:checked ~ .option-paper-6 .dot::before,
+		#option-paper-7:checked:checked ~ .option-paper-7 .dot::before,
+		#option-paper-8:checked:checked ~ .option-paper-8 .dot::before,
+		#option-paper-9:checked:checked ~ .option-paper-9 .dot::before,
+		#option-paper-10:checked:checked ~ .option-paper-10 .dot::before,
+		#option-paper-11:checked:checked ~ .option-paper-11 .dot::before,
+		#option-paper-12:checked:checked ~ .option-paper-12 .dot::before{
+		  opacity: 1;
+		  transform: scale(1);
+		}
+
+		#option-paper-1:checked:checked ~ .option-paper-1 span,
+		#option-paper-2:checked:checked ~ .option-paper-2 span,
+		#option-paper-3:checked:checked ~ .option-paper-3 span,
+		#option-paper-4:checked:checked ~ .option-paper-4 span,
+		#option-paper-5:checked:checked ~ .option-paper-5 span,
+		#option-paper-6:checked:checked ~ .option-paper-6 span,
+		#option-paper-7:checked:checked ~ .option-paper-7 span,
+		#option-paper-8:checked:checked ~ .option-paper-8 span,
+		#option-paper-9:checked:checked ~ .option-paper-9 span,
+		#option-paper-10:checked:checked ~ .option-paper-10 span,
+		#option-paper-11:checked:checked ~ .option-paper-11 span,
+		#option-paper-12:checked:checked ~ .option-paper-12 span{
+		  color: #fff;
+		}
+		
+
+		#option-order-1:checked:checked ~ .option-order-1,
+		#option-order-2:checked:checked ~ .option-order-2,
+		#option-order-3:checked:checked ~ .option-order-3{
+		  border-color: #373737;
+		  background: #373737;
+		}
+		#option-order-1:checked:checked ~ .option-order-1 .dot,
+		#option-order-2:checked:checked ~ .option-order-2 .dot,
+		#option-order-3:checked:checked ~ .option-order-3 .dot{
+		  background: #fff;
+		}
+		#option-order-1:checked:checked ~ .option-order-1 .dot::before,
+		#option-order-2:checked:checked ~ .option-order-2 .dot::before,
+		#option-order-3:checked:checked ~ .option-order-3 .dot::before{
+		  opacity: 1;
+		  transform: scale(1);
+		}
+
+		#option-order-1:checked:checked ~ .option-order-1 span,
+		#option-order-2:checked:checked ~ .option-order-2 span,
+		#option-order-3:checked:checked ~ .option-order-3 span{
+		  color: #fff;
+		}
+
+
+		div {
+			font-family: Arial;
+		}
+		#logoimg {
+			width:100px;
+		}
+
+		.top-right-info {
+			position: absolute;
+			top: 10px; /* Adjust as needed */
+			right: 10px; /* Adjust as needed */
+			font-size: 24px; /* Adjust the size of the ⓘ symbol */
+			z-index: 1000; /* Ensure it stays on top */
+		}
+
+		.top-right-info a {
+			text-decoration: none;
+			color: #4d4d4d; /* You can change this color as needed */
+			opacity: 0.75;
+			font-weight: bold;
+		}
+
+		.top-right-info a:hover {
+			color: white; /* Change the color on hover */
+			cursor: pointer;
+		}
+
+		.submit-button{
+			box-shadow: 0 0 2px #fdf7d5;
+		 }
+		
+		 .submit-button:hover{
+			box-shadow: 0 0 12px #fdf7d5;
+		 }
+		
