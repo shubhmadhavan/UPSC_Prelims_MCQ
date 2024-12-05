@@ -11,7 +11,7 @@ body, html {
 	justify-content: center;
 	align-items: center;
 	background-color: #2a2a2a;
-   
+   zoom:0.99;
 }
 #question-container {
 	padding: 20px;
