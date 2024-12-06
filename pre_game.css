@@ -51,6 +51,7 @@ ul{
 	margin-left:30px;
 } 
 
+/* iPhone 15 hotfix */
 @media only screen and (max-width: 430px) and (max-height: 932px) {
 	/* Use transform scale for resizing content */
 	html {
@@ -70,5 +71,27 @@ ul{
 		width: unset !important; 
 		margin-top: unset !important; 
 		padding-left: unset !important;
+	}
+  }
+
+  /* iPad Air hotfix */
+  @media only screen and (max-width: 1640px) and (max-height: 2360px) {
+	html {
+		transform: scale(1.135); /* Scale down content to 50% */
+		transform-origin: top left; /* Keep content aligned from the top-left corner */
+		width: 100%; /* Ensure full width for scaling */
+	}
+	#notes-container{
+		position:unset !important; 
+		top: unset !important; 
+		left:unset !important; 
+		width: unset !important; 
+		margin-top: unset !important; 
+		padding-left: unset !important;
+	}
+
+	#navigation{
+		transform: scale(0.86);
+		margin-top: -120px !important;
 	}
   }
