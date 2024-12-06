@@ -32,3 +32,97 @@
     #json_preview {
       color: #a6a6a6;
     }
+/* Ensure both input and preview are 400px wide and appear side by side */
+.input-preview-wrapper {
+    display: flex;
+    gap: 20px;
+
+  }
+  
+  .input-preview-wrapper input,
+  .input-preview-wrapper select,
+  .input-preview-wrapper textarea {
+    width: 600px;
+    zoom:0.9;
+  }
+  
+  .input-preview-wrapper div {
+    width: 600px;
+    border: 1px solid #303030; /* Optional: Adds a border to preview */
+    padding: 10px;
+    word-wrap: break-word;
+    height: auto;
+  }
+  
+  /* Optional: Styling for the form group to make it look better */
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .qhtml textarea, .qnotes textarea {
+    height: 40px;
+  }
+  
+  .qnotes textarea {
+    height: 80px;
+  }
+
+  textarea {
+    height: unset;
+    resize: vertical !important; /* Allows resizing vertically */
+    overflow-y: hidden; /* Hides the scrollbar */
+  }
+
+  #qtextPreview, #qhtmlPreview, #statementsPreview, #optionsPreview, #ansPreview, #qnotesPreview {
+        zoom:81%;   
+        margin-top:6.1px;
+        line-height: 1;
+        font-size: 13.5px;
+  }
+
+  
+  #qhtmlPreview > ul , #qnotesPreview > ul {
+    line-height: 0.3;
+  }
+
+  /* Wrapper for both qno and qtype to place them side by side */
+.wrapper-for-file-name,
+.wrapper-for-qno,
+.wrapper-for-qtype {
+  display: inline-block;
+  vertical-align: top;
+  width: 200px; /* Adjust the width of each wrapper */
+  margin-right: 20px; /* Optional: Adds space between the two fields */
+}
+
+.wrapper-for-qno label,
+.wrapper-for-qtype label {
+  display: block;
+  margin-bottom: 5px; /* Optional: Adjusts the label spacing */
+}
+
+.form-group{
+    line-height: 0.4;
+}
+
+
+
+#json-output{
+    width:1060px;
+    border: 1px solid #404040;
+}
+
+textarea, input{
+    border: 1px solid #404040;
+}
+
+textarea:focus, input:focus{
+    border: 1px solid #404040;
+}
